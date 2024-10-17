@@ -47,3 +47,27 @@ password in project is qazplmtygv so your MySql password of root user have to be
    INSERT INTO api_inventory (name, quantity) VALUES ('MacBook M1 Pro', 10);
    COMMIT;
    ```
+
+
+## Using the Services
+Inventory Service
+Check Availability:
+
+Endpoint: GET /api/inventory/{id}/
+Description: Check the availability of an inventory item by its ID.
+Reduce Quantity:
+
+Endpoint: POST /api/inventory/reduce/
+Description: Reduce the quantity of an inventory item.
+Order Service
+Create Order:
+
+Endpoint: POST /api/order/create/
+Description: Create a new order for an inventory item.
+Get Order by ID:
+
+Endpoint: GET /api/order/{id}/
+Description: Retrieve order details by order ID.
+Shipping Service
+Change Order Status:
+This service listens for messages from RabbitMQ to update the order status.
