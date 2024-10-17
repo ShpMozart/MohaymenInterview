@@ -62,7 +62,7 @@ Description: Reduce the quantity of an inventory item.
 Order Service
 Create Order:
 
-Endpoint: POST /api/order/create/
+Endpoint: POST /api/order/
 Description: Create a new order for an inventory item.
 Get Order by ID:
 
