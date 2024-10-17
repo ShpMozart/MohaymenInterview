@@ -1,0 +1,71 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: qazplmtygv
+      MYSQL_DATABASE: mohaymen
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql-init:/docker-entrypoint-initdb.d
+
+  inventory:
+    build:
+      context: ./inventory_service
+    volumes:
+      - ./inventory_service:/app
+    ports:
+      - "8080:8080"
+    environment:
+      - MYSQL_DATABASE=mohaymen
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=qazplmtygv
+      - RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - db
+      - rabbitmq
+    platform: linux/amd64
+    command: sh -c "sleep 10 && python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8080"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  order_service:
+    build:
+      context: ./order_service
+    volumes:
+      - ./order_service:/app
+    ports:
+      - "8081:8081"
+    environment:
+      - MYSQL_DATABASE=mohaymen
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=qazplmtygv
+      - RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - db
+      - rabbitmq
+    platform: linux/amd64
+    command: sh -c "sleep 10 && python3 manage.py runserver 0.0.0.0:8081"
+
+  shipping_service:
+    build:
+      context: ./shipping_service
+    volumes:
+      - ./shipping_service:/app
+    environment:
+      - MYSQL_DATABASE=mohaymen
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=qazplmtygv
+      - RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - db
+      - rabbitmq
+    platform: linux/amd64
+    command: sh -c "sleep 10 && python3 -c 'from api.rabbitmq_consumer import start_consumer; start_consumer()'"
