@@ -47,3 +47,7 @@ password in project is qazplmtygv so your MySql password of root user have to be
    INSERT INTO api_inventory (name, quantity) VALUES ('MacBook M1 Pro', 10);
    COMMIT;
    ```
+2. **Use the services**:
+   - Install thunder client extension on your vs code
+   - use services
+
